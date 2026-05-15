@@ -115,4 +115,45 @@ var (
 	// dispatcher routes by kind — but the sentinel exists so a
 	// misregistered resolver fails loudly.
 	ErrResolverNotApplicable = errors.New("agentcontext: resolver kind mismatch")
+
+	// ErrSkillMissingName is returned by skills.Skill.Validate (and by
+	// extension skills.Parse) when a skill frontmatter omits the
+	// required name/slug pair. A skill without a stable name cannot be
+	// looked up deterministically and is rejected at parse time.
+	ErrSkillMissingName = errors.New("agentcontext: skill missing name")
+
+	// ErrSkillMissingDescription is returned by skills.Skill.Validate
+	// when a skill frontmatter omits the required description field.
+	// The description anchors the rendered skill_index slot — emitting
+	// trigger-only lines would defeat the purpose — so the field is
+	// required at the contract layer.
+	ErrSkillMissingDescription = errors.New("agentcontext: skill missing description")
+
+	// ErrSkillNoFrontmatter is returned by skills.Parse when the
+	// supplied bytes do not begin with a "---" YAML frontmatter
+	// delimiter. A skill file without frontmatter is treated as a
+	// parse failure — the discovery layer records the failure per
+	// file and continues with the rest of the layer.
+	ErrSkillNoFrontmatter = errors.New("agentcontext: skill missing frontmatter")
+
+	// ErrSkillInvalidFrontmatter is returned by skills.Parse when the
+	// frontmatter delimiters are present but the enclosed body does
+	// not parse as YAML. Wraps the underlying yaml decoder error so
+	// callers can surface the line/column.
+	ErrSkillInvalidFrontmatter = errors.New("agentcontext: skill invalid frontmatter")
+
+	// ErrSkillNotFound is returned by skills.Index.Get when the
+	// requested skill name is not present in the index, and by the
+	// skill_index slot resolver when Required=true AND zero skills
+	// resolved. The latter case wraps ErrSkillNotFound under
+	// ErrRequiredSlotFailed via the dispatcher.
+	ErrSkillNotFound = errors.New("agentcontext: skill not found")
+
+	// ErrSkillRootMissing is returned by skills.Discover when a
+	// configured Layer.Root does not exist AND DiscoveryConfig.AllowEmpty
+	// is false. The default behaviour is AllowEmpty=true — missing
+	// roots are silently skipped so a portable boot profile that
+	// references both ~/.tether/skills and ~/.nanite/skills works on a
+	// host where only one is present.
+	ErrSkillRootMissing = errors.New("agentcontext: skill discovery root missing")
 )

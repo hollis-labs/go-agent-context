@@ -39,3 +39,32 @@ func Default() map[agentcontext.SlotSourceKind]agentcontext.Resolver {
 		agentcontext.SlotSourceKindRoleSummary: NewRoleSummaryResolver(),
 	}
 }
+
+// WithSkillIndex augments an existing resolver map with the
+// skill_index resolver and returns the (same) map for chaining. This
+// is the opt-in pairing for Default() — callers that want the full
+// eight-kind set do:
+//
+//	res := resolvers.WithSkillIndex(resolvers.Default())
+//	p, _ := agentcontext.NewProvider(res, agentcontext.DefaultRenderer{})
+//
+// The skill_index resolver is intentionally kept OUT of Default()
+// because the on-disk skill model (skills.DiscoveryConfig) is a
+// non-trivial extension over the agentcontext core contract and
+// some consumers will legitimately want to wire a custom resolver
+// that talks to a network skill registry instead. The opt-in
+// pairing keeps Default() pure-stdlib while making the common
+// "give me everything" case a one-liner.
+//
+// The supplied options are forwarded to NewSkillIndexResolver — see
+// WithSkillIndexDefaultLimit, WithSkillIndexStrictMissingRoot,
+// WithSkillIndexRecursive, and WithSkillIndexFilePattern.
+//
+// If m is nil, a new empty map is allocated and returned.
+func WithSkillIndex(m map[agentcontext.SlotSourceKind]agentcontext.Resolver, opts ...SkillIndexOption) map[agentcontext.SlotSourceKind]agentcontext.Resolver {
+	if m == nil {
+		m = map[agentcontext.SlotSourceKind]agentcontext.Resolver{}
+	}
+	m[agentcontext.SlotSourceKindSkillIndex] = NewSkillIndexResolver(opts...)
+	return m
+}
