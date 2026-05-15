@@ -25,15 +25,17 @@ type Layer struct {
 
 	// Root is the directory to walk. A leading "~" is expanded to the
 	// current user's HOME by Discover. Empty roots are silently
-	// skipped — DiscoveryConfig.AllowEmpty controls whether a root
-	// that is configured but missing on disk is an error or a no-op.
+	// skipped — DiscoveryConfig.StrictMissingRoot controls whether a
+	// root that is configured but missing on disk is an error or a
+	// no-op.
 	Root string
 }
 
 // DiscoveryConfig is the input shape for Discover. Zero values are
 // intentionally usable: a freshly-constructed DiscoveryConfig with
-// no Layers returns an empty Index with no error (AllowEmpty
-// defaults to true for the missing-root case).
+// no Layers returns an empty Index with no error. Missing roots are
+// silently skipped by default; flip StrictMissingRoot for fail-loud
+// behaviour.
 type DiscoveryConfig struct {
 	// Layers is the ordered list of discovery layers, lowest-priority
 	// first. Skills with the same Name in a later layer override the
@@ -51,23 +53,11 @@ type DiscoveryConfig struct {
 	// tree.
 	Recursive bool
 
-	// AllowEmpty controls the missing-root policy. The zero value
-	// (false here means "require") is INVERTED at runtime: we want
-	// the helpful default to be "missing roots are OK" so that a
-	// portable boot profile referencing both ~/.tether/skills and
-	// ~/.nanite/skills works on a host where only one is present.
-	// Operators who want strict mode set AllowEmpty=false explicitly
-	// in conjunction with the dedicated Strict() helper, or use
-	// the StrictMissingRoot field below.
-	//
-	// To keep the API obvious, we expose StrictMissingRoot rather
-	// than relying on zero-value inversion. AllowEmpty is reserved
-	// for a future "Required skills" axis and is currently unused.
-	AllowEmpty bool
-
 	// StrictMissingRoot, when true, makes Discover return
 	// ErrSkillRootMissing if any configured Layer.Root does not exist
-	// on disk. Default false: missing roots are silently skipped.
+	// on disk. Default false: missing roots are silently skipped, so a
+	// portable boot profile that references both ~/.tether/skills and
+	// ~/.nanite/skills works on a host where only one is present.
 	StrictMissingRoot bool
 }
 

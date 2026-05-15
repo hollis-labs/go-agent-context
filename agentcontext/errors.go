@@ -150,10 +150,10 @@ var (
 	ErrSkillNotFound = errors.New("agentcontext: skill not found")
 
 	// ErrSkillRootMissing is returned by skills.Discover when a
-	// configured Layer.Root does not exist AND DiscoveryConfig.AllowEmpty
-	// is false. The default behaviour is AllowEmpty=true — missing
-	// roots are silently skipped so a portable boot profile that
-	// references both ~/.tether/skills and ~/.nanite/skills works on a
-	// host where only one is present.
+	// configured Layer.Root does not exist AND
+	// DiscoveryConfig.StrictMissingRoot is true. The default behaviour
+	// is silent skip — missing roots are tolerated so a portable boot
+	// profile that references both ~/.tether/skills and ~/.nanite/skills
+	// works on a host where only one is present.
 	ErrSkillRootMissing = errors.New("agentcontext: skill discovery root missing")
 )

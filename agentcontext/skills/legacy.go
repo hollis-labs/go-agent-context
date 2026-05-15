@@ -11,9 +11,9 @@ package skills
 //	})
 //
 // Order is lowest-priority first; later layers override earlier
-// ones (see Discover). Missing roots are silently skipped (default
-// AllowEmpty / non-Strict behavior); operators flip
-// DiscoveryConfig.StrictMissingRoot for fail-loud behaviour.
+// ones (see Discover). Missing roots are silently skipped by
+// default; operators flip DiscoveryConfig.StrictMissingRoot for
+// fail-loud behaviour.
 //
 // The legacy roots in this slice are intentionally bare strings.
 // Discover expands the leading ~ via os.UserHomeDir at walk time, so
