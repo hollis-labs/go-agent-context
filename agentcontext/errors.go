@@ -74,4 +74,45 @@ var (
 	// common case; callers must opt out explicitly by passing a
 	// non-nil custom Renderer.
 	ErrMissingRenderer = errors.New("agentcontext: nil renderer")
+
+	// ErrCmdFailed is returned by the cmd resolver when the underlying
+	// shell command exits with a non-zero status. The wrap value
+	// includes the exit code and a captured tail of stderr for
+	// debugging.
+	ErrCmdFailed = errors.New("agentcontext: cmd resolver: non-zero exit")
+
+	// ErrCmdTimeout is returned by the cmd resolver when the
+	// underlying shell command did not complete within the
+	// resolver-side timeout (CmdSource.Timeout, default 30s, capped at
+	// 5m). Wraps context.DeadlineExceeded for callers that prefer to
+	// branch on the stdlib sentinel.
+	ErrCmdTimeout = errors.New("agentcontext: cmd resolver: timeout")
+
+	// ErrHTTPStatus is returned by the http_text and http_json
+	// resolvers when the server replies with a non-2xx status code.
+	// The wrap value names the offending status code.
+	ErrHTTPStatus = errors.New("agentcontext: http resolver: non-2xx status")
+
+	// ErrHTTPRequest is returned by the http_text and http_json
+	// resolvers when the request itself fails (DNS, connection refused,
+	// I/O error, response-body read failure). Wraps the underlying
+	// transport error.
+	ErrHTTPRequest = errors.New("agentcontext: http resolver: request failed")
+
+	// ErrJSONPathNotFound is returned by the http_json resolver when
+	// the configured JSONPath expression navigates into a value that
+	// does not exist. Empty JSONPath ("$" / "") never triggers this
+	// sentinel — it returns the whole document.
+	ErrJSONPathNotFound = errors.New("agentcontext: http_json resolver: jsonpath not found")
+
+	// ErrInvalidJSON is returned by the http_json resolver when the
+	// HTTP response body is not parseable as JSON.
+	ErrInvalidJSON = errors.New("agentcontext: http_json resolver: invalid JSON body")
+
+	// ErrResolverNotApplicable is returned by a resolver when the
+	// supplied SlotSpec.Source.Kind does not match the resolver's
+	// declared kind. This should never happen in practice — the
+	// dispatcher routes by kind — but the sentinel exists so a
+	// misregistered resolver fails loudly.
+	ErrResolverNotApplicable = errors.New("agentcontext: resolver kind mismatch")
 )
