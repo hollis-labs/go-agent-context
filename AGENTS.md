@@ -31,8 +31,9 @@ go vet ./...
 ## Boundaries
 
 This module was absorbed into `agentkit` as `agentkit/agentcontext` at agentkit
-v0.1.0 and has not changed since v0.1.0 (2026-05-14). New work belongs in
-`agentkit`.
+v0.1.0, and this repo is maintenance-only. New work belongs in `agentkit`.
+
+`CHANGELOG.md` and the git tags are the authority for what has shipped here.
 
 Determinism is the contract, not an optimization: identical requests must
 produce byte-identical rendered output and byte-identical request hashes. Slots
